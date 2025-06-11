@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EasyReply - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f6f9fc, #e2e8f0);
+      color: #1a202c;
+      padding: 2rem;
+      max-width: 700px;
+      margin: auto;
+    }
+    .header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;
+    }
+    .logo {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #2b6cb0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo i {
+      color: #6b46c1;
+      font-size: 1.4rem;
+    }
+    .logout {
+      background: #fff;
+      color: #e53e3e;
+      border: 2px solid #e53e3e;
+      padding: 0.4rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .logout:hover {
+      background: #e53e3e;
+      color: white;
+    }
+    .settings-btn {
+      background-color: #edf2f7;
+      color: #4a5568;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+    .settings-btn:hover {
+      background: #e2e8f0;
+    }
+    .credits {
+      background: #ebf4ff;
+      color: #2c5282;
+      font-weight: 600;
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+      width: fit-content;
+    }
+    label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+    textarea, select, input[type="text"] {
+      width: 100%;
+      padding: 1rem;
+      background: #f9fafb;
+      border: 2px solid #cbd5e0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      transition: border 0.3s ease;
+    }
+    textarea:focus, select:focus, input:focus {
+      border-color: #805ad5;
+      outline: none;
+    }
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+    }
+    .btn.generate {
+      background: linear-gradient(135deg, #805ad5, #6b46c1);
+      color: white;
+    }
+    .btn.clear {
+      background-color: #f1f5f9;
+      color: #2d3748;
+      margin-top: 0.6rem;
+    }
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    .reply-box {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 1.4rem;
+      margin-top: 2rem;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+      animation: fadeIn 0.4s ease;
+    }
+    .reply-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .copy-btn {
+      background: #edf2f7;
+      color: #4a5568;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s ease;
+    }
+    .copy-btn:hover {
+      background-color: #e2e8f0;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      animation: slideUp 0.4s ease;
+    }
+    .modal-content h2 {
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 24px;
+      font-weight: bold;
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile Responsive */
+    @media screen and (max-width: 480px) {
+      .logo { font-size: 1.5rem; }
+      .btn, .logout, .settings-btn {
+        font-size: 0.95rem;
+      }
+      .modal-content {
+        padding: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo"><i class="fas fa-reply"></i> EasyReply</div>
+    <div style="text-align: right;">
+      <form action="/logout" method="POST">
+        <button class="logout">Logout</button>
+      </form>
+      <button class="settings-btn" onclick="document.getElementById('modal').style.display='flex'"><i class="fas fa-cog"></i> Settings</button>
+    </div>
+  </div>
+
+  <div>Logged in as: <strong>{{ username }}</strong></div>
+  <div class="credits" id="creditDisplay">{{ credits }} Credits</div>
+
+  <div class="input-group">
+    <label for="review">Paste your Business Review</label>
+    <textarea id="review" placeholder="Google, Zomato, Tripadvisor, etc."></textarea>
+  </div>
+
+  <div class="input-group">
+    <label for="tone">Reply Tone</label>
+    <select id="tone">
+      <option>Professional</option>
+      <option>Friendly</option>
+      <option>Polite</option>
+      <option>Apologetic</option>
+      <option>Thankful</option>
+      <option>Appreciative</option>
+      <option>Encouraging</option>
+    </select>
+  </div>
+
+  <button class="btn generate" onclick="showReply()">Generate Reply</button>
+  <button class="btn clear" onclick="clearReply()">Clear</button>
+
+  <div id="replyBox" class="reply-box" style="display: none;">
+    <div class="reply-header">
+      🤖 Generated Reply
+      <button class="copy-btn" onclick="copyReply(this)">📋 Copy</button>
+    </div>
+    <p id="replyText"></p>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('modal').style.display='none'">&times;</button>
+      <h2>Advanced Settings</h2>
+      <div class="input-group"><label>Business Name</label><input type="text" id="businessName"></div>
+      <div class="input-group">
+        <label>Business Type</label>
+        <select id="businessCategory">
+          <option selected disabled>Select your business</option>
+          <option>Restaurant</option>
+          <option>Hotel</option>
+          <option>Retail Shop</option>
+          <option>Clinic</option>
+          <option>Online Store</option>
+          <option>Salon</option>
+          <option>Education</option>
+          <option>Real Estate</option>
+        </select>
+      </div>
+      <div class="input-group"><label>Reply Length</label>
+        <select id="replyLength">
+          <option>Short</option>
+          <option>Medium</option>
+          <option>Long</option>
+        </select>
+      </div>
+      <div class="input-group"><label>Reply Signature</label><input type="text" id="signature"></div>
+      <div class="input-group"><label><input type="checkbox" id="enableSocialCTA"> Enable Social CTA</label></div>
+      <div class="input-group"><label>CTA Type</label>
+        <select id="ctaType">
+          <option>Follow us on Instagram</option>
+          <option>Like our Facebook Page</option>
+          <option>Subscribe to our YouTube Channel</option>
+          <option>Visit our Website</option>
+        </select>
+      </div>
+      <div class="input-group"><label>CTA Link</label><input type="text" id="ctaLink"></div>
+      <button class="btn generate" onclick="saveSettings()">✅ Save</button>
+      <button class="btn clear" onclick="document.getElementById('modal').style.display='none'">Cancel</button>
+    </div>
+  </div>
+
+<script>
+function showReply() {
+  const review = document.getElementById("review").value.trim();
+  if (!review) return alert("❗ Please paste a review first.");
+
+  const payload = {
+    review_text: review,
+    tone: document.getElementById("tone").value,
+    business_name: localStorage.getItem("businessName") || "",
+    business_category: localStorage.getItem("businessCategory") || "",
+    reply_length: localStorage.getItem("replyLength") || "Short",
+    signature: localStorage.getItem("signature") || "",
+    cta_enabled: localStorage.getItem("enableSocialCTA") === "true",
+    cta_type: localStorage.getItem("ctaType") || "",
+    cta_link: localStorage.getItem("ctaLink") || ""
+  };
+
+  fetch("/generate_reply", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (typeof data.credits === "number") {
+      document.getElementById("creditDisplay").innerText = data.credits + " Credits";
+    }
+    document.getElementById("replyText").innerText = data.reply;
+    document.getElementById("replyBox").style.display = "block";
+  })
+  .catch(() => alert("Something went wrong!"));
+}
+
+function clearReply() {
+  document.getElementById("review").value = "";
+  document.getElementById("replyBox").style.display = "none";
+}
+
+function copyReply(btn) {
+  const text = document.getElementById("replyText").innerText;
+  navigator.clipboard.writeText(text);
+  btn.innerText = "✅ Copied";
+  setTimeout(() => { btn.innerText = "📋 Copy"; }, 2000);
+}
+
+function saveSettings() {
+  const ids = ["businessName", "businessCategory", "replyLength", "signature", "enableSocialCTA", "ctaType", "ctaLink"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) localStorage.setItem(id, el.type === "checkbox" ? el.checked : el.value);
+  });
+  alert("✅ Settings saved!");
+  document.getElementById("modal").style.display = "none";
+}
+</script>
+
+</body>
+</html>
